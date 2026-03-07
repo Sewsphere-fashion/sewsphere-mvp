@@ -4,6 +4,7 @@ import { cn } from "@/src/lib/utils"
 import { Menu, X } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import AuthModal from "./AuthModal"
 
 const NavLinks = [
     { name: "Explore Designers", href: "#Explore" },
@@ -14,7 +15,8 @@ const NavLinks = [
 export default function Navbar() {
     const [open, setOpen] = useState(false)
     const [activeHash, setActiveHash] = useState("")
-
+    const [authOpen, setAuthOpen] = useState(false)
+    const [authMode, setAuthMode] = useState<"login" | "signup">("login")
 
     useEffect(() => {
         setActiveHash(window.location.hash || "#Explore")
@@ -59,13 +61,13 @@ export default function Navbar() {
                                 className={cn(
                                     "relative py-1 transition-colors",
                                     isActive
-                                        ? "text-primary font-medium"
-                                        : "text-muted-foreground hover:text-primary"
+                                        ? "text-[#C76B4A] font-medium"
+                                        : "text-muted-foreground hover:text-[#C76B4A]"
                                 )}
                             >
                                 {link.name}
                                 {isActive && (
-                                    <span className="absolute left-0 -bottom-[3px] h-[2px] w-full bg-primary" />
+                                    <span className="absolute left-0 -bottom-[3px] h-[2px] w-full bg-[#C76B4A]" />
                                 )}
                             </Link>
                         )
@@ -73,16 +75,29 @@ export default function Navbar() {
                 </nav>
 
                 {/* Desktop CTA */}
-                <div>
-                    <button className="hidden md:inline-flex bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm">
-                       Log In 
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => {
+                            setAuthMode("login")
+                            setAuthOpen(true)
+                        }}
+                        className="hidden md:inline-flex cursor-pointer text-[#C76B4A] border border-[#C76B4A]-foreground px-4 py-2 rounded-md text-sm"
+                    >
+                        Log In
                     </button>
-                    <button className="hidden md:inline-flex bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm">
+
+                    <button
+                        onClick={() => {
+                            setAuthMode("signup")
+                            setAuthOpen(true)
+                        }}
+                        className="hidden md:inline-flex cursor-pointer bg-[#C76B4A] text-white -foreground px-4 py-2 rounded-md text-sm"
+                    >
                         Sign Up
                     </button>
                 </div>
 
-                {/* Mobile Hamburger */}
+                {/* Mobile Hamburger */}  
                 <button
                     className="md:hidden"
                     onClick={() => setOpen(!open)}
@@ -90,13 +105,13 @@ export default function Navbar() {
                 >
                     {open ? <X size={24} /> : <Menu size={24} />}
                 </button>
-            </div>
+            </div>  
 
             {/* Mobile Dropdown */}
             {open && (
                 <div className="md:hidden bg-white  border-t">
                     <nav className="flex flex-col px-6 py-4 space-y-4 text-sm">
-
+  
 
                         {NavLinks.map((link, index) => {
                             const isActive = activeHash === link.href
@@ -109,14 +124,14 @@ export default function Navbar() {
                                     className={cn(
                                         "relative py-1 transition-colors",
                                         isActive
-                                            ? "text-primary font-medium"
+                                            ? "text-[#C76B4A] font-medium"
                                             : "text-muted-foreground hover:text-foreground"
                                     )}
                                 >
                                     {link.name}
 
                                     {isActive && (
-                                        <span className="absolute left-0 -bottom-[3px] h-[2px] w-1/4 bg-primary" />
+                                        <span className="absolute left-0 -bottom-[3px] h-[2px] w-1/4 bg-[#C76B4A]" />
                                     )}
                                 </Link>
                             )
@@ -125,13 +140,19 @@ export default function Navbar() {
                         <Link
                             href="#waitlist"
                             onClick={() => setOpen(false)}
-                            className="bg-primary text-primary-foreground text-center py-2 rounded-md"
+                            className="bg-[#C76B4A] text-[#C76B4A]-foreground text-center py-2 rounded-md"
                         >
                             Join the Waitlist
                         </Link>
                     </nav>
                 </div>
             )}
+
+            <AuthModal
+                open={authOpen}
+                mode={authMode}
+                onClose={() => setAuthOpen(false)}
+            />
         </header>
     )
 }
