@@ -10,6 +10,7 @@ const NavLinks = [
     { name: "Explore Designers", href: "#Explore" },
     { name: "Marketplace", href: "#Marketplace" },
     { name: "How It Works", href: "#how" },
+    { name: "Become a Designer", href: "#designer" },
 ]
 
 export default function Navbar() {
@@ -59,7 +60,7 @@ export default function Navbar() {
                                 href={link.href}
                                 onClick={() => handleNavClick(link.href)}
                                 className={cn(
-                                    "relative py-1 transition-colors",
+                                    "relative py-1 transition-colors" ,
                                     isActive
                                         ? "text-[#C76B4A] font-medium"
                                         : "text-muted-foreground hover:text-[#C76B4A]"
@@ -122,7 +123,7 @@ export default function Navbar() {
                                     href={link.href}
                                     onClick={() => handleNavClick(link.href)}
                                     className={cn(
-                                        "relative py-1 transition-colors",
+                                        "relative py-1 transition-colors mx-auto",
                                         isActive
                                             ? "text-[#C76B4A] font-medium"
                                             : "text-muted-foreground hover:text-foreground"
@@ -131,19 +132,33 @@ export default function Navbar() {
                                     {link.name}
 
                                     {isActive && (
-                                        <span className="absolute left-0 -bottom-[3px] h-[2px] w-1/4 bg-[#C76B4A]" />
+                                        <span className="absolute left-0 -bottom-[3px] h-[2px] w-full bg-[#C76B4A]" />
                                     )}
                                 </Link>
                             )
                         })}
 
-                        <Link
-                            href="#waitlist"
-                            onClick={() => setOpen(false)}
-                            className="bg-[#C76B4A] text-[#C76B4A]-foreground text-center py-2 rounded-md"
-                        >
-                            Join the Waitlist
-                        </Link>
+                      <div className="flex flex-col gap-4">
+                    <button
+                        onClick={() => {
+                            setAuthMode("login")
+                            setAuthOpen(true)
+                        }}
+                        className="md:hidden cursor-pointer text-[#C76B4A] border border-[#C76B4A]-foreground px-4 py-2 rounded-md text-sm"
+                    >
+                        Log In
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            setAuthMode("signup")
+                            setAuthOpen(true)
+                        }}
+                        className="md:hidden cursor-pointer bg-[#C76B4A] text-white -foreground px-4 py-2 rounded-md text-sm"
+                    >
+                        Sign Up
+                    </button>
+                </div>
                     </nav>
                 </div>
             )}
