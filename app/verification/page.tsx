@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function Verification() {
+function VerificationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<"success" | "failed" | "already-verified">("failed");
@@ -49,5 +49,14 @@ export default function Verification() {
         </button>
       </div>
     </div>
+    
+  );
+}
+
+export default function Verification() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
+      <VerificationContent />
+    </Suspense>
   );
 }
