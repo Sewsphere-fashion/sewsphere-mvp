@@ -1,11 +1,19 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function VerifyEmailModal() {
+export default function Verification() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const status = searchParams.get("status") || "failed"; 
+  const [status, setStatus] = useState<"success" | "failed" | "already-verified">("failed");
+
+  useEffect(() => {
+    const param = searchParams.get("status");
+    if (param === "success" || param === "failed" || param === "already-verified") {
+      setStatus(param);
+    }
+  }, [searchParams]);
 
   const modalContent = {
     success: {
@@ -16,16 +24,16 @@ export default function VerifyEmailModal() {
     "already-verified": {
       icon: "⚡",
       title: "Already Verified",
-      message: "This email was already verified. You can continue using your account. Please log in to continue.",
+      message: "This email was already verified. Please log in to continue.",
     },
     failed: {
       icon: "❌",
       title: "Verification Failed",
-      message: "This verification link is invalid or has expired. Please sign up again or contact support for assistance."
+      message: "This verification link is invalid or has expired. Please sign up again or contact support.",
     },
   };
 
-  const { icon, title, message } = modalContent[status as keyof typeof modalContent] || modalContent.failed;
+  const { icon, title, message } = modalContent[status];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
