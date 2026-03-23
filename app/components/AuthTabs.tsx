@@ -12,7 +12,7 @@ export function AuthTabs({ mode, setMode }: AuthTabsProps) {
         <div className="flex bg-gray-100 rounded-xl p-1 px-2 mb-4">
             <button
                 onClick={() => setMode("login")}
-                className={`flex-1 py-2 rounded-md text-sm transition ${mode === "login"
+                className={`flex-1 py-2 rounded-md text-sm transition cursor-pointer ${mode === "login"
                         ? "bg-white text-primary font-medium"
                         : "text-muted-foreground"
                     }`}
@@ -22,7 +22,7 @@ export function AuthTabs({ mode, setMode }: AuthTabsProps) {
 
             <button
                 onClick={() => setMode("signup")}
-                className={`flex-1 py-2 rounded-md text-sm transition ${mode === "signup"
+                className={`flex-1 py-2 rounded-md text-sm transition cursor-pointer ${mode === "signup"
                         ? "bg-white text-primary font-medium"
                         : "text-muted-foreground"
                     }`}

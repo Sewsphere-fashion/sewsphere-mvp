@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AuthTabs } from "../components/AuthTabs";
 import { Eye, EyeOff } from "lucide-react";
+import SignupSuccess from "../components/signupsuccess";
 
 function Input({
   label,
@@ -54,6 +55,13 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
     return "";
   };
 
+  const handleChange =
+    (setter: (value: string) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setter(e.target.value);
+      setError("");
+    };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationError = validate();
@@ -77,7 +85,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || "Login failed, please try again");
       }
 
       console.log("LOGIN SUCCESS:", data);
@@ -98,7 +106,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
         type="email"
         placeholder="Enter your email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={handleChange(setEmail)}
       />
 
       <Input
@@ -106,12 +114,12 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
         type={showPassword ? "text" : "password"}
         placeholder="Enter your password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={handleChange(setPassword)}
         rightIcon={
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="text-gray-500"
+            className="text-gray-500 cursor-pointer"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}{" "}
           </button>
@@ -127,21 +135,21 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
         <button
           type="button"
           onClick={onForgot}
-          className="text-[#C76B4A] hover:underline"
+          className="text-[#C76B4A] hover:underline cursor-pointer"
         >
           Forgot Password?
         </button>
       </div>
 
+      {error && <p className="text-red-500 text-center text-sm">{error}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-[#C76B4A] py-2 text-sm font-medium text-white"
+        className="w-full cursor-pointer rounded-md bg-[#C76B4A] py-2 text-sm font-medium text-white"
       >
         {loading ? "Signing in..." : "Sign In"}
       </button>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
     </form>
   );
 }
@@ -159,6 +167,7 @@ function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [role, setRole] = useState<"client" | "designer">("client");
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const validate = () => {
     if (
@@ -185,6 +194,12 @@ function SignupForm() {
     }
 
     return "";
+  };
+  const handleChange =
+  (setter: (value: string) => void) =>
+  (e: React.ChangeEvent<HTMLInputElement>) => {
+    setter(e.target.value);
+    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -222,10 +237,10 @@ function SignupForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Signup failed");
+        throw new Error(data.message || "Signup ");
       }
-
-      console.log("SIGNUP SUCCESS:", data);
+      setSuccessOpen(true);
+      //   console.log("SIGNUP SUCCESS:", data);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -240,7 +255,7 @@ function SignupForm() {
         <button
           type="button"
           onClick={() => setRole("client")}
-          className={`flex-1 py-2 rounded-md text-sm transition ${
+          className={`flex-1 py-2 rounded-md text-sm transition cursor-pointer ${
             role === "client"
               ? "bg-[#C76B4A] text-white"
               : "bg-white text-black border border-[#E8E8E8] "
@@ -252,7 +267,7 @@ function SignupForm() {
         <button
           type="button"
           onClick={() => setRole("designer")}
-          className={`flex-1 py-2 rounded-md text-sm transition ${
+          className={`flex-1 py-2 rounded-md text-sm transition cursor-pointer ${
             role === "designer"
               ? "bg-[#C76B4A] text-white"
               : "bg-white text-black border border-[#E8E8E8]"
@@ -264,36 +279,37 @@ function SignupForm() {
       <div className="flex gap-2">
         <Input
           label="First Name"
-          placeholder="Victor"
+          placeholder="Enter First Name"
           value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          onChange={handleChange(setFirstName)}
         />
         <Input
           label="Last Name"
-          placeholder="Otozi"
+          placeholder="Enter Last Name"
           value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          onChange={handleChange(setLastName)}
         />
       </div>
 
       <Input
         label="Email"
         type="email"
-        placeholder="victor@example.com"
+        placeholder="Enter your Email Address"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={handleChange(setEmail)}
       />
 
       <Input
         label="Create Password"
         type={showPassword ? "text" : "password"}
+        placeholder="Create a password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={handleChange(setPassword)}
         rightIcon={
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="text-gray-500 hover:text-gray-700"
+            className=" cursor-pointer text-gray-500 hover:text-gray-700"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -302,16 +318,17 @@ function SignupForm() {
 
       <Input
         label="Confirm Password"
-        type={showPassword ? "text" : "password"}
+        type={showConfirmPassword ? "text" : "password"}
+        placeholder="Re-type your password"
         value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
+        onChange={handleChange(setConfirmPassword)}
         rightIcon={
           <button
             type="button"
             onClick={() => setShowConfirmPassword((prev) => !prev)}
-            className="text-gray-500 hover:text-gray-700"
+            className="cursor-pointer text-gray-500 hover:text-gray-700"
           >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         }
       />
@@ -329,11 +346,12 @@ function SignupForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-[#C76B4A] py-2 text-sm font-medium text-white"
+        className="w-full rounded-md cursor-pointer bg-[#C76B4A] py-2 text-sm font-medium text-white"
       >
         {loading ? "Creating account..." : "Sign Up"}
       </button>
 
+      <SignupSuccess open={successOpen} onClose={() => setSuccessOpen(false)} />
     </form>
   );
 }
@@ -349,6 +367,13 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
     if (!email) return "Email is required";
     if (!email.includes("@")) return "Enter a valid email";
     return "";
+  };
+
+  const handleChange =
+  (setter: (value: string) => void) =>
+  (e: React.ChangeEvent<HTMLInputElement>) => {
+    setter(e.target.value);
+    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -377,7 +402,7 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed");
+        throw new Error(data.message || "");
       }
 
       setMessage("Reset link sent to your email");
@@ -407,13 +432,12 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
         label="Email"
         type="email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+ onChange={handleChange(setEmail)}      />
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-[#C76B4A] py-2 text-white"
+        className="cursor-pointer w-full rounded-md bg-[#C76B4A] py-2 text-white"
       >
         {loading ? "Sending..." : "Send Reset Code"}
       </button>
@@ -424,7 +448,7 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
       <button
         type="button"
         onClick={onBackToLogin}
-        className="text-sm text-[#C76B4A] underline w-full"
+        className="cursor-pointer text-sm text-[#C76B4A] underline w-full"
       >
         Back to Login
       </button>
@@ -484,7 +508,7 @@ export default function LoginAndSignupForm({
           <button
             type="button"
             onClick={() => setMode("login")}
-            className="text-sm text-[#C76B4A] underline"
+            className="cursor-pointer text-sm text-[#C76B4A] underline"
           >
             Sign in
           </button>
