@@ -4,6 +4,7 @@ import { cn } from "@/src/lib/utils"
 import { Menu, X } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation";
 import AuthModal from "./AuthModal"
 
 const NavLinks = [
@@ -18,10 +19,29 @@ export default function Navbar() {
     const [activeHash, setActiveHash] = useState("")
     const [authOpen, setAuthOpen] = useState(false)
     const [authMode, setAuthMode] = useState<"login" | "signup">("login")
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         setActiveHash(window.location.hash || "#Explore")
     }, [])
+
+    useEffect(() => {
+    const auth = searchParams.get("auth");
+
+    if (auth === "login") {
+        setAuthMode("login");
+        setAuthOpen(true);
+    }
+
+    if (auth === "signup") {
+        setAuthMode("signup");
+        setAuthOpen(true);
+    }
+
+    if (auth) {
+        window.history.replaceState(null, "", "/");
+    }
+}, [searchParams]);
 
     const handleNavClick = (href: string) => {
         const id = href.replace("#", "")
