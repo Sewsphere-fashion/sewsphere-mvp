@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AuthTabs } from "../components/AuthTabs";
 import { Eye, EyeOff } from "lucide-react";
 import SignupSuccess from "../components/signupsuccess";
+import WelcomeModal from "../components/WelcomeModal";
 
 function Input({
   label,
@@ -43,6 +44,8 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
   const validate = () => {
     if (!email || !password) {
       return "Email and password are required";
@@ -88,10 +91,15 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
         throw new Error(data.message || "Login failed, please try again");
       }
 
-      console.log("LOGIN SUCCESS:", data);
-
       // Example: store token
       localStorage.setItem("token", data.token);
+      setEmail("");
+      setPassword("");
+      setError("");
+
+      const firstName = data.user?.firstName || "User";
+      setFirstName(firstName);
+      setWelcomeOpen(true);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -150,6 +158,11 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
         {loading ? "Signing in..." : "Sign In"}
       </button>
 
+      <WelcomeModal
+        open={welcomeOpen}
+        firstName={firstName}
+        onClose={() => setWelcomeOpen(false)}
+      />
     </form>
   );
 }
@@ -196,11 +209,11 @@ function SignupForm() {
     return "";
   };
   const handleChange =
-  (setter: (value: string) => void) =>
-  (e: React.ChangeEvent<HTMLInputElement>) => {
-    setter(e.target.value);
-    setError("");
-  };
+    (setter: (value: string) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setter(e.target.value);
+      setError("");
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,8 +250,14 @@ function SignupForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Signup ");
+        throw new Error(data.message || "Signup Error, please try again");
       }
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setError("");
       setSuccessOpen(true);
       //   console.log("SIGNUP SUCCESS:", data);
     } catch (err: any) {
@@ -370,11 +389,11 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
   };
 
   const handleChange =
-  (setter: (value: string) => void) =>
-  (e: React.ChangeEvent<HTMLInputElement>) => {
-    setter(e.target.value);
-    setError("");
-  };
+    (setter: (value: string) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setter(e.target.value);
+      setError("");
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -404,7 +423,7 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
       if (!res.ok) {
         throw new Error(data.message || "");
       }
-
+      setEmail("");
       setMessage("Reset link sent to your email");
     } catch (err: any) {
       setError(err.message);
@@ -432,7 +451,8 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
         label="Email"
         type="email"
         value={email}
- onChange={handleChange(setEmail)}      />
+        onChange={handleChange(setEmail)}
+      />
 
       <button
         type="submit"
