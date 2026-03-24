@@ -97,7 +97,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       setPassword("");
       setError("");
 
-      const firstName = data.user?.firstName || "User";
+      const firstName = data.data.user?.firstName || "User";
       setFirstName(firstName);
       setWelcomeOpen(true);
     } catch (err: any) {
