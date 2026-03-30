@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AuthTabs } from "../components/AuthTabs";
 import { Eye, EyeOff } from "lucide-react";
 import SignupSuccess from "../components/signupsuccess";
-import WelcomeModal from "../components/WelcomeModal";
+import WelcomeModal from "../components/Modals/WelcomeModal";
 
 function Input({
   label,
@@ -77,7 +77,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
     setError("");
 
     try {
-      const res = await fetch("https://api.sewsphere.co/api/users/login", {
+      const res = await fetch("https://api.sewsphere.co/api/v1/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -233,7 +233,7 @@ function SignupForm() {
     setError("");
 
     try {
-      const res = await fetch("https://api.sewsphere.co/api/users/register", {
+      const res = await fetch("https://api.sewsphere.co/api/v1/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -408,7 +408,7 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
 
     try {
       const res = await fetch(
-        "https://api.sewsphere.co/api/users/forgot-password",
+        "https://api.sewsphere.co/api/v1/users/forgot-password",
         {
           method: "POST",
           headers: {
