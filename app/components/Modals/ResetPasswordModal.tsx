@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface Props {
   open: boolean;
@@ -11,7 +11,6 @@ interface Props {
 
 export default function ResetPasswordModal({ open, onClose }: Props) {
   const router = useRouter();
-  const { token } = router.query; 
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -36,7 +35,17 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
     isStrongPassword(newPassword) &&
     newPassword === confirmPassword;
 
+    // Read token from URL (client-only)
+  const token =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("token")
+      : null;
+
   const handleSubmit = async () => {
+     if (!token) {
+      setError("Reset token is missing or invalid");
+      return;
+    }
     if (!isStrongPassword(newPassword)) {
       setError(
         "Password must be 8+ characters with uppercase, lowercase, number & symbol",
