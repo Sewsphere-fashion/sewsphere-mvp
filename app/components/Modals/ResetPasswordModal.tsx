@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/dist/client/components/navigation";
+import { useRouter } from "next/router";
 
 interface Props {
   open: boolean;
@@ -11,6 +11,7 @@ interface Props {
 
 export default function ResetPasswordModal({ open, onClose }: Props) {
   const router = useRouter();
+  const { token } = router.query; 
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -60,6 +61,7 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            token,
             newPassword,
             confirmPassword,
           }),
@@ -76,7 +78,7 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
       setNewPassword("");
       setConfirmPassword("");
       setSuccess(true);
-      onClose();
+     
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -164,7 +166,9 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
             </p>
 
             <button
-              onClick={() => router.push("/?auth=login")}
+              onClick={() => {
+                    onClose();
+                    router.push("/?auth=login")}}
               className="w-full bg-[#C76B4A] text-white py-2 rounded-md text-sm"
             >
               Go to Login
