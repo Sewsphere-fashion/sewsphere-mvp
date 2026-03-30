@@ -86,13 +86,17 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       });
 
       const data = await res.json();
+    //   localStorage.setItem("token", data.data.token);
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed, please try again");
       }
 
-      // Example: store token
+       if (data?.data?.token) {
       localStorage.setItem("token", data.data.token);
+      localStorage.setItem("user", JSON.stringify(data.data.user));
+
+      
       setEmail("");
       setPassword("");
       setError("");
@@ -100,6 +104,9 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       const firstName = data.data.user?.firstName || "User";
       setFirstName(firstName);
       setWelcomeOpen(true);
+       } else {
+      throw new Error("Token not found in response");
+    }
     } catch (err: any) {
       setError(err.message);
     } finally {
