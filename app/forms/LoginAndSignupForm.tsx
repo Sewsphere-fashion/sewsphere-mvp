@@ -92,7 +92,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       }
 
       // Example: store token
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.data.token);
       setEmail("");
       setPassword("");
       setError("");
