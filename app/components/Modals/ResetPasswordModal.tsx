@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   open: boolean;
@@ -35,11 +35,8 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
     isStrongPassword(newPassword) &&
     newPassword === confirmPassword;
 
-    // Read token from URL (client-only)
-  const token =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search).get("token")
-      : null;
+  const searchParams = useSearchParams();
+const token = searchParams.get("token");
 
   const handleSubmit = async () => {
      if (!token) {

@@ -86,14 +86,14 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       });
 
       const data = await res.json();
-    //   localStorage.setItem("token", data.data.token);
+    //   localStorage.setItem("token", data.data.accessToken);
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed, please try again");
       }
 
-       if (data?.data?.token) {
-      localStorage.setItem("token", data.data.token);
+       if (data?.data?.accessToken) {
+      localStorage.setItem("token", data.data.accessToken);
       localStorage.setItem("user", JSON.stringify(data.data.user));
 
       
@@ -104,8 +104,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       const firstName = data.data.user?.firstName || "User";
       setFirstName(firstName);
       setWelcomeOpen(true);
-       } else {
-      throw new Error("Token not found in response");
+       
     }
     } catch (err: any) {
       setError(err.message);
