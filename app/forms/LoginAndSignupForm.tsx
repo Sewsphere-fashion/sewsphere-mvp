@@ -465,7 +465,7 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
         disabled={loading}
         className="cursor-pointer w-full rounded-md bg-[#C76B4A] py-2 text-white"
       >
-        {loading ? "Sending..." : "Send Reset Code"}
+        {loading ? "Sending..." : "Send Reset Link"}
       </button>
 
       {message && <p className="text-green-600 text-sm">{message}</p>}

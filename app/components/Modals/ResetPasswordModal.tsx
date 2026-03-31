@@ -22,6 +22,9 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
   if (!open) return null;
 
   // ✅ Password validation
@@ -35,11 +38,8 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
     isStrongPassword(newPassword) &&
     newPassword === confirmPassword;
 
-  const searchParams = useSearchParams();
-const token = searchParams.get("token");
-
   const handleSubmit = async () => {
-     if (!token) {
+    if (!token) {
       setError("Reset token is missing or invalid");
       return;
     }
@@ -84,7 +84,6 @@ const token = searchParams.get("token");
       setNewPassword("");
       setConfirmPassword("");
       setSuccess(true);
-     
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -111,7 +110,7 @@ const token = searchParams.get("token");
                   setNewPassword(e.target.value);
                   setError("");
                 }}
-                className="w-full border rounded-md px-3 py-2 text-sm pr-10"
+                className="w-full border rounded-md px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C76B4A]"
               />
 
               <button
@@ -133,7 +132,7 @@ const token = searchParams.get("token");
                   setConfirmPassword(e.target.value);
                   setError("");
                 }}
-                className="w-full border rounded-md px-3 py-2 text-sm pr-10"
+                className="w-full border rounded-md px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C76B4A]"
               />
 
               <button
@@ -173,8 +172,9 @@ const token = searchParams.get("token");
 
             <button
               onClick={() => {
-                    onClose();
-                    router.push("/?auth=login")}}
+                onClose();
+                router.push("/?auth=login");
+              }}
               className="w-full bg-[#C76B4A] text-white py-2 rounded-md text-sm"
             >
               Go to Login
