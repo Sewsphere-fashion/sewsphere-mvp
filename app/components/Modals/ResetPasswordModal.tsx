@@ -60,14 +60,14 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
       setError("");
 
       const res = await fetch(
-        "https://api.sewsphere.co/api/v1/users/reset-password",
+        `https://api.sewsphere.co/api/v1/users/reset-password?token=${token}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            token,
+        
             newPassword,
             confirmPassword,
           }),
