@@ -449,7 +449,7 @@ function ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void }) {
         <p className="text-sm text-gray-500 text-center">
           {" "}
           No worries, enter the email address to your account and we’ll send you
-          a secure reset code.{" "}
+          a secure reset link.{" "}
         </p>{" "}
       </div>
 
@@ -537,6 +537,19 @@ export default function LoginAndSignupForm({
             className="cursor-pointer text-sm text-[#C76B4A] underline"
           >
             Sign in
+          </button>
+        </p>
+      )}
+
+      {mode === "login" && (
+        <p className="text-xs text-muted-foreground mt-4 text-center">
+          Don't have an account?{" "}
+          <button
+            type="button"
+            onClick={() => setMode("signup")}
+            className="cursor-pointer text-sm text-[#C76B4A] underline"
+          >
+            Sign up
           </button>
         </p>
       )}

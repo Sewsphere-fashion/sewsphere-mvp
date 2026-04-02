@@ -32,11 +32,7 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(pwd);
   };
 
-  const isValid =
-    newPassword &&
-    confirmPassword &&
-    isStrongPassword(newPassword) &&
-    newPassword === confirmPassword;
+  const isValid = newPassword && confirmPassword
 
   const handleSubmit = async () => {
     if (!token) {
@@ -96,9 +92,9 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 space-y-4">
         {!success ? (
           <>
-            <h2 className="text-lg font-semibold text-center">
+            <h1 className="text-lg font-semibold text-center">
               Create New Password
-            </h2>
+            </h1>
 
             {/* PASSWORD */}
             <div className="relative">
