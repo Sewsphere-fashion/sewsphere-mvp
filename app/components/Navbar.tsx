@@ -4,7 +4,7 @@ import { cn } from "@/src/lib/utils";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import AuthModal from "./AuthModal";
 
 const NavLinks = [
@@ -21,8 +21,9 @@ export default function Navbar() {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
-  // Handle auth query param (?auth=login or signup)
+  // Handle auth query param (?auth=login or ?auth=signup)
   useEffect(() => {
     const auth = searchParams.get("auth");
 
@@ -30,9 +31,10 @@ export default function Navbar() {
       setAuthMode(auth);
       setAuthOpen(true);
 
-      window.history.replaceState(null, "", pathname);
+      // Safe Next.js way to clean URL (NO window usage)
+      router.replace(pathname);
     }
-  }, [searchParams, pathname]);
+  }, [searchParams, pathname, router]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md px-6">
