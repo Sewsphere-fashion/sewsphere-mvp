@@ -1,193 +1,169 @@
-"use client"
+"use client";
 
-import { cn } from "@/src/lib/utils"
-import { Menu, X } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation";
-import AuthModal from "./AuthModal"
+import { cn } from "@/src/lib/utils";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import AuthModal from "./AuthModal";
 
 const NavLinks = [
-    { name: "Explore Designers", href: "#Explore" },
-    { name: "Marketplace", href: "#Marketplace" },
-    { name: "How It Works", href: "#how" },
-    { name: "Become a Designer", href: "#designer" },
-]
+  { name: "Home", href: "/" },
+  { name: "Designer", href: "/designer" },
+  { name: "Ready-made", href: "/ready-made" },
+  { name: "Order", href: "/order" },
+];
 
 export default function Navbar() {
-    const [open, setOpen] = useState(false)
-    const [activeHash, setActiveHash] = useState("")
-    const [authOpen, setAuthOpen] = useState(false)
-    const [authMode, setAuthMode] = useState<"login" | "signup">("login")
-    const searchParams = useSearchParams();
+  const [open, setOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
 
-    useEffect(() => {
-        setActiveHash(window.location.hash || "#Explore")
-    }, [])
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-    useEffect(() => {
+  // Handle auth query param (?auth=login or ?auth=signup)
+  useEffect(() => {
     const auth = searchParams.get("auth");
 
-    if (auth === "login") {
-        setAuthMode("login");
-        setAuthOpen(true);
+    if (auth === "login" || auth === "signup") {
+      setAuthMode(auth);
+      setAuthOpen(true);
+
+      // Safe Next.js way to clean URL (NO window usage)
+      router.replace(pathname);
     }
+  }, [searchParams, pathname, router]);
 
-    if (auth === "signup") {
-        setAuthMode("signup");
-        setAuthOpen(true);
-    }
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md px-6">
+      <div className="container mx-auto h-20 flex items-center justify-between">
+        
+        {/* Logo */}
+        <Link href="/">
+          <img src="/images/logo2.png" alt="SewSphere Logo" />
+        </Link>
 
-    if (auth) {
-        window.history.replaceState(null, "", "/");
-    }
-}, [searchParams]);
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex gap-6 text-sm">
+          {NavLinks.map((link) => {
+            const isActive = pathname === link.href;
 
-    const handleNavClick = (href: string) => {
-        const id = href.replace("#", "")
-        const element = document.getElementById(id)
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={cn(
+                  "relative py-1 transition-colors",
+                  isActive
+                    ? "text-[#C76B4A] font-medium"
+                    : "text-muted-foreground hover:text-[#C76B4A]"
+                )}
+              >
+                {link.name}
+                {isActive && (
+                  <span className="absolute left-0 -bottom-[3px] h-[2px] w-full bg-[#C76B4A]" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
 
-        if (element) {
-            element.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-            })
-        }
+        {/* Desktop CTA */}
+        <div className="hidden md:flex gap-2">
+          <button
+            onClick={() => {
+              setAuthMode("login");
+              setAuthOpen(true);
+            }}
+            className="cursor-pointer text-[#C76B4A] border border-[#C76B4A] px-4 py-2 rounded-md text-sm"
+          >
+            Log In
+          </button>
 
-        setActiveHash(href)
-        setOpen(false)
+          <button
+            onClick={() => {
+              setAuthMode("signup");
+              setAuthOpen(true);
+            }}
+            className="cursor-pointer bg-[#C76B4A] text-white px-4 py-2 rounded-md text-sm"
+          >
+            Sign Up
+          </button>
+        </div>
 
-        // Update URL without jump
-        window.history.pushState(null, "", href)
-    }
+        {/* Mobile Hamburger */}
+        <button
+          className="md:hidden"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
+          {open ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
+      {/* Mobile Dropdown */}
+      {open && (
+        <div className="md:hidden bg-white border-t">
+          <nav className="flex flex-col px-6 py-4 space-y-4 text-sm">
+            {NavLinks.map((link) => {
+              const isActive = pathname === link.href;
 
-    return (
-        <header className="fixed text-black top-0 left-0 right-0 z-50 bg-white shadow-md px-6">
-            <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-
-                {/* Logo */}
-                <img src="/images/logo2.png" alt="SewSphere Logo" />
-
-                {/* Desktop Nav */}
-                <nav className="hidden md:flex gap-6 text-sm">
-                    {NavLinks.map((link, index) => {
-                        const isActive = activeHash === link.href
-
-                        return (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                onClick={() => handleNavClick(link.href)}
-                                className={cn(
-                                    "relative py-1 transition-colors" ,
-                                    isActive
-                                        ? "text-[#C76B4A] font-medium"
-                                        : "text-muted-foreground hover:text-[#C76B4A]"
-                                )}
-                            >
-                                {link.name}
-                                {isActive && (
-                                    <span className="absolute left-0 -bottom-[3px] h-[2px] w-full bg-[#C76B4A]" />
-                                )}
-                            </Link>
-                        )
-                    })}
-                </nav>
-
-                {/* Desktop CTA */}
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => {
-                            setAuthMode("login")
-                            setAuthOpen(true)
-                        }}
-                        className="hidden md:inline-flex cursor-pointer text-[#C76B4A] border border-[#C76B4A]-foreground px-4 py-2 rounded-md text-sm"
-                    >
-                        Log In
-                    </button>
-
-                    <button
-                        onClick={() => {
-                            setAuthMode("signup")
-                            setAuthOpen(true)
-                        }}
-                        className="hidden md:inline-flex cursor-pointer bg-[#C76B4A] text-white -foreground px-4 py-2 rounded-md text-sm"
-                    >
-                        Sign Up
-                    </button>
-                </div>
-
-                {/* Mobile Hamburger */}  
-                <button
-                    className="md:hidden"
-                    onClick={() => setOpen(!open)}
-                    aria-label="Toggle menu"
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "relative py-1",
+                    isActive
+                      ? "text-[#C76B4A] font-medium"
+                      : "text-muted-foreground"
+                  )}
                 >
-                    {open ? <X size={24} /> : <Menu size={24} />}
-                </button>
-            </div>  
+                  {link.name}
+                  {isActive && (
+                    <span className="absolute left-0 -bottom-[3px] h-[2px] w-1/4 bg-[#C76B4A]" />
+                  )}
+                </Link>
+              );
+            })}
 
-            {/* Mobile Dropdown */}
-            {open && (
-                <div className="md:hidden bg-white  border-t">
-                    <nav className="flex flex-col px-6 py-4 space-y-4 text-sm">
-  
+            {/* Mobile CTA */}
+            <div className="flex flex-col gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setAuthMode("login");
+                  setAuthOpen(true);
+                  setOpen(false);
+                }}
+                className="cursor-pointer text-[#C76B4A] border border-[#C76B4A] px-4 py-2 rounded-md text-sm"
+              >
+                Log In
+              </button>
 
-                        {NavLinks.map((link, index) => {
-                            const isActive = activeHash === link.href
+              <button
+                onClick={() => {
+                  setAuthMode("signup");
+                  setAuthOpen(true);
+                  setOpen(false);
+                }}
+                className="cursor-pointer bg-[#C76B4A] text-white px-4 py-2 rounded-md text-sm"
+              >
+                Sign Up
+              </button>
+            </div>
+          </nav>
+        </div>
+      )}
 
-                            return (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    onClick={() => handleNavClick(link.href)}
-                                    className={cn(
-                                        "relative py-1 transition-colors mx-auto",
-                                        isActive
-                                            ? "text-[#C76B4A] font-medium"
-                                            : "text-muted-foreground hover:text-foreground"
-                                    )}
-                                >
-                                    {link.name}
-
-                                    {isActive && (
-                                        <span className="absolute left-0 -bottom-[3px] h-[2px] w-full bg-[#C76B4A]" />
-                                    )}
-                                </Link>
-                            )
-                        })}
-
-                      <div className="flex flex-col gap-4">
-                    <button
-                        onClick={() => {
-                            setAuthMode("login")
-                            setAuthOpen(true)
-                        }}
-                        className="md:hidden cursor-pointer text-[#C76B4A] border border-[#C76B4A]-foreground px-4 py-2 rounded-md text-sm"
-                    >
-                        Log In
-                    </button>
-
-                    <button
-                        onClick={() => {
-                            setAuthMode("signup")
-                            setAuthOpen(true)
-                        }}
-                        className="md:hidden cursor-pointer bg-[#C76B4A] text-white -foreground px-4 py-2 rounded-md text-sm"
-                    >
-                        Sign Up
-                    </button>
-                </div>
-                    </nav>
-                </div>
-            )}
-
-            <AuthModal
-                open={authOpen}
-                mode={authMode}
-                onClose={() => setAuthOpen(false)}
-            />
-        </header>
-    )
+      {/* Auth Modal */}
+      <AuthModal
+        open={authOpen}
+        mode={authMode}
+        onClose={() => setAuthOpen(false)}
+      />
+    </header>
+  );
 }
