@@ -42,7 +42,7 @@ const footerLinks = [
   {
     heading: "Company",
     headingColor: "text-gray-900",
-    links: ["About US", "Careers", "Contact", "Blog"],
+    links: ["About Us", "Careers", "Contact", "Blog"],
     linkColor: "text-gray-500 hover:text-gray-800",
   },
 ];

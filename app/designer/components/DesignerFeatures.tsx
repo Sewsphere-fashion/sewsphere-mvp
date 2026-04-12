@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+
 import { MapPin, Star, BadgeCheck, ArrowRight } from "lucide-react";
 
 interface Designer {
@@ -76,7 +76,6 @@ const designers: Designer[] = [
 ];
 
 function DesignerCard({ designer }: { designer: Designer }) {
-  const router = useRouter();
   return (
     <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
       {/* Image */}
@@ -86,7 +85,6 @@ function DesignerCard({ designer }: { designer: Designer }) {
           alt={designer.name}
           className="w-full h-48 object-cover object-top"
         />
-        {/* Verified badge */}
         <div className="absolute bottom-2 right-2">
           <BadgeCheck className="w-6 h-6 text-[#1a9ed4] fill-white" />
         </div>
@@ -99,6 +97,7 @@ function DesignerCard({ designer }: { designer: Designer }) {
           <h3 className="text-sm font-semibold text-gray-900 leading-tight">
             {designer.name}
           </h3>
+
           <div className="flex items-center gap-1 text-xs text-gray-500 whitespace-nowrap flex-shrink-0">
             <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
             <span className="font-medium text-gray-700">{designer.rating}</span>
@@ -126,7 +125,9 @@ function DesignerCard({ designer }: { designer: Designer }) {
 
         {/* CTA */}
         <button
-          onClick={() => router.push(`/designer/${designer.id}`)}
+          onClick={() =>
+            (window.location.href = `/designer/${designer.id}`)
+          }
           className="mt-auto pt-3 w-full border border-[#c4684a] text-[#c4684a] text-xs font-medium rounded-lg py-2 hover:bg-[#c4684a] hover:text-white transition-colors duration-200"
         >
           View Portfolio
@@ -137,8 +138,6 @@ function DesignerCard({ designer }: { designer: Designer }) {
 }
 
 export default function DesignerFeatures() {
-  const router = useRouter();
-
   return (
     <section className="w-full bg-[rgb(250,250,250)] rounded-2xl p-6 md:p-16">
       {/* Header */}
@@ -151,12 +150,13 @@ export default function DesignerFeatures() {
             Discover professional and talented creators for your outfits
           </p>
         </div>
-        <button
-          onClick={() => router.push("/designers")}
+
+        <a
+          href="/designers"
           className="flex items-center gap-1 text-sm text-[#c4684a] font-medium hover:underline whitespace-nowrap"
         >
           View all Designers <ArrowRight className="w-4 h-4" />
-        </button>
+        </a>
       </div>
 
       {/* Grid */}
