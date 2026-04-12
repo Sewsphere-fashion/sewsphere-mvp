@@ -3,8 +3,8 @@
 import { cn } from "@/src/lib/utils";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import AuthModal from "./AuthModal";
 
 const NavLinks = [
@@ -19,11 +19,25 @@ export default function Navbar() {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
 
-  const pathname = usePathname(); // ✅ current route
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Handle auth query param (?auth=login or signup)
+  useEffect(() => {
+    const auth = searchParams.get("auth");
+
+    if (auth === "login" || auth === "signup") {
+      setAuthMode(auth);
+      setAuthOpen(true);
+
+      window.history.replaceState(null, "", pathname);
+    }
+  }, [searchParams, pathname]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md px-6">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+      <div className="container mx-auto h-20 flex items-center justify-between">
+        
         {/* Logo */}
         <Link href="/">
           <img src="/images/logo2.png" alt="SewSphere Logo" />
@@ -42,7 +56,7 @@ export default function Navbar() {
                   "relative py-1 transition-colors",
                   isActive
                     ? "text-[#C76B4A] font-medium"
-                    : "text-muted-foreground hover:text-[#C76B4A]",
+                    : "text-muted-foreground hover:text-[#C76B4A]"
                 )}
               >
                 {link.name}
@@ -55,13 +69,13 @@ export default function Navbar() {
         </nav>
 
         {/* Desktop CTA */}
-        <div className="flex gap-2">
+        <div className="hidden md:flex gap-2">
           <button
             onClick={() => {
               setAuthMode("login");
               setAuthOpen(true);
             }}
-            className="hidden md:inline-flex cursor-pointer text-[#C76B4A] border px-4 py-2 rounded-md text-sm"
+            className="cursor-pointer text-[#C76B4A] border border-[#C76B4A] px-4 py-2 rounded-md text-sm"
           >
             Log In
           </button>
@@ -71,7 +85,7 @@ export default function Navbar() {
               setAuthMode("signup");
               setAuthOpen(true);
             }}
-            className="hidden md:inline-flex cursor-pointer bg-[#C76B4A] text-white px-4 py-2 rounded-md text-sm"
+            className="cursor-pointer bg-[#C76B4A] text-white px-4 py-2 rounded-md text-sm"
           >
             Sign Up
           </button>
@@ -100,14 +114,13 @@ export default function Navbar() {
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "relative py-1 transition-colors",
+                    "relative py-1",
                     isActive
                       ? "text-[#C76B4A] font-medium"
-                      : "text-muted-foreground hover:text-foreground",
+                      : "text-muted-foreground"
                   )}
                 >
                   {link.name}
-
                   {isActive && (
                     <span className="absolute left-0 -bottom-[3px] h-[2px] w-1/4 bg-[#C76B4A]" />
                   )}
@@ -115,16 +128,30 @@ export default function Navbar() {
               );
             })}
 
-            <button
-              onClick={() => {
-                setAuthMode("signup");
-                setAuthOpen(true);
-                setOpen(false);
-              }}
-              className="bg-[#C76B4A] text-white text-center py-2 rounded-md"
-            >
-              Join Now
-            </button>
+            {/* Mobile CTA */}
+            <div className="flex flex-col gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setAuthMode("login");
+                  setAuthOpen(true);
+                  setOpen(false);
+                }}
+                className="cursor-pointer text-[#C76B4A] border border-[#C76B4A] px-4 py-2 rounded-md text-sm"
+              >
+                Log In
+              </button>
+
+              <button
+                onClick={() => {
+                  setAuthMode("signup");
+                  setAuthOpen(true);
+                  setOpen(false);
+                }}
+                className="cursor-pointer bg-[#C76B4A] text-white px-4 py-2 rounded-md text-sm"
+              >
+                Sign Up
+              </button>
+            </div>
           </nav>
         </div>
       )}
