@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { Suspense } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -9,8 +10,11 @@ export default function TermsAndConditionsPage() {
   const router = useRouter();
 
   return (
-      <div className="min-h-screen bg-white px-6 py-10 md:px-20">
-        <Navbar/>
+    <div className="min-h-screen bg-white px-6 py-10 md:px-20">
+      <Suspense fallback={null}>
+        <Navbar />
+      </Suspense>
+
       {/* Back Button */}
       <button
         onClick={() => router.back()}
