@@ -1,89 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { MapPin, Star, BadgeCheck, ArrowRight } from "lucide-react";
+import { designers, Designer } from "@/lib/designers";
 
-interface Designer {
-  id: number;
-  name: string;
-  location: string;
-  rating: number;
-  reviews: number;
-  tags: string[];
-  image: string;
-}
-
-const designers: Designer[] = [
-  {
-    id: 1,
-    name: "Gabriel Babatunde",
-    location: "Lagos, Nigeria",
-    rating: 4.5,
-    reviews: 20,
-    tags: ["Bridal", "Cooperate Wears", "Casuals", "BeSpoke"],
-    image:
-      "https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=400&h=300&fit=crop&crop=face",
-  },
-  {
-    id: 2,
-    name: "Amina Olatunji",
-    location: "Abuja, Nigeria",
-    rating: 4.8,
-    reviews: 15,
-    tags: ["Evening Gowns", "Custom Designs", "Work Attire"],
-    image:
-      "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=300&fit=crop&crop=face",
-  },
-  {
-    id: 3,
-    name: "Chinonso Okeke",
-    location: "Port Harcourt, Nigeria",
-    rating: 4.7,
-    reviews: 25,
-    tags: ["Traditional Wear", "Wedding Attire", "Street Style"],
-    image:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face",
-  },
-  {
-    id: 4,
-    name: "Rose Okoro",
-    location: "Lagos, Nigeria",
-    rating: 4.5,
-    reviews: 20,
-    tags: ["Bridal", "Cooperate Wears", "Casuals", "BeSpoke"],
-    image:
-      "https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=400&h=300&fit=crop&crop=face",
-  },
-  {
-    id: 5,
-    name: "Amina Yusuf",
-    location: "Lagos, Nigeria",
-    rating: 4.8,
-    reviews: 15,
-    tags: ["Sportswear", "Athletic Apparel", "Bespoke"],
-    image:
-      "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=300&fit=crop&crop=face",
-  },
-  {
-    id: 6,
-    name: "Jamal Khan",
-    location: "Ibadan, Nigeria",
-    rating: 4.2,
-    reviews: 30,
-    tags: ["Formal Wear", "Luxury Fashion", "Wedding Attire"],
-    image:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face",
-  },
-];
 
 function DesignerCard({ designer }: { designer: Designer }) {
   return (
     <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+      
       {/* Image */}
       <div className="relative">
         <img
           src={designer.image}
           alt={designer.name}
-          className="w-full h-48 object-cover object-top"
+          className="w-full h-48 object-contain object-center"
         />
         <div className="absolute bottom-2 right-2">
           <BadgeCheck className="w-6 h-6 text-[#1a9ed4] fill-white" />
@@ -92,15 +23,18 @@ function DesignerCard({ designer }: { designer: Designer }) {
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1 gap-2">
+        
         {/* Name + rating */}
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-sm font-semibold text-gray-900 leading-tight">
             {designer.name}
           </h3>
 
-          <div className="flex items-center gap-1 text-xs text-gray-500 whitespace-nowrap flex-shrink-0">
+          <div className="flex items-center gap-1 text-xs text-gray-500 whitespace-nowrap">
             <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span className="font-medium text-gray-700">{designer.rating}</span>
+            <span className="font-medium text-gray-700">
+              {designer.rating}
+            </span>
             <span>({designer.reviews})</span>
           </div>
         </div>
@@ -124,14 +58,11 @@ function DesignerCard({ designer }: { designer: Designer }) {
         </div>
 
         {/* CTA */}
-        <button
-          onClick={() =>
-            (window.location.href = `/designer/${designer.id}`)
-          }
-          className="mt-auto pt-3 w-full border border-[#c4684a] text-[#c4684a] text-xs font-medium rounded-lg py-2 hover:bg-[#c4684a] hover:text-white transition-colors duration-200"
-        >
-          View Portfolio
-        </button>
+        <Link href={`/designer/${designer.id}`} className="mt-auto pt-3">
+          <button className="w-full border border-[#c4684a] text-[#c4684a] text-xs font-medium rounded-lg py-2 hover:bg-[#c4684a] hover:text-white transition-colors duration-200">
+            View Portfolio
+          </button>
+        </Link>
       </div>
     </div>
   );
@@ -140,6 +71,7 @@ function DesignerCard({ designer }: { designer: Designer }) {
 export default function DesignerFeatures() {
   return (
     <section className="w-full bg-[rgb(250,250,250)] rounded-2xl p-6 md:p-16">
+      
       {/* Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start justify-between mb-5 text-center md:text-left gap-2">
         <div>
@@ -151,12 +83,12 @@ export default function DesignerFeatures() {
           </p>
         </div>
 
-        <a
-          href="/designers"
+        <Link
+          href="/designer"
           className="flex items-center gap-1 text-sm text-[#c4684a] font-medium hover:underline whitespace-nowrap"
         >
           View all Designers <ArrowRight className="w-4 h-4" />
-        </a>
+        </Link>
       </div>
 
       {/* Grid */}

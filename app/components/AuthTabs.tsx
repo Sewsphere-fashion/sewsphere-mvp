@@ -9,7 +9,7 @@ interface AuthTabsProps {
 
 export function AuthTabs({ mode, setMode }: AuthTabsProps) {
     return (
-        <div className="flex bg-gray-100 rounded-xl p-1 px-2 mb-4">
+        <div className="flex bg-gray-100 rounded-xl p-1 px-2 mb-4 w-[95%]">
             <button
                 onClick={() => setMode("login")}
                 className={`flex-1 py-2 rounded-md text-sm transition cursor-pointer ${mode === "login"

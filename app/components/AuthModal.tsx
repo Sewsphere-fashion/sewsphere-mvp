@@ -16,7 +16,7 @@ export default function AuthModal({ open, mode, onClose }: AuthModalProps) {
       <div className="relative w-full max-w-sm">
         <button
           onClick={onClose}
-          className="cursor-pointer absolute top-0 right-0 bg-white rounded-full px-2 py-1 shadow"
+          className="cursor-pointer absolute top-0 right-1 bg-white rounded-full px-2 py-1 shadow"
         >
           ✕
         </button>
