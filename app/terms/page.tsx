@@ -2,12 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function TermsAndConditionsPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-white px-6 py-10 md:px-20">
+      <div className="min-h-screen bg-white px-6 py-10 md:px-20">
+        <Navbar/>
       {/* Back Button */}
       <button
         onClick={() => router.back()}
@@ -126,6 +129,7 @@ export default function TermsAndConditionsPage() {
           </p>
         </section>
       </div>
+      {/* <Footer/> */}
     </div>
   );
 }
