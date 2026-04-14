@@ -31,7 +31,6 @@ export default function Navbar() {
       setAuthMode(auth);
       setAuthOpen(true);
 
-      // Safe Next.js way to clean URL (NO window usage)
       router.replace(pathname);
     }
   }, [searchParams, pathname, router]);

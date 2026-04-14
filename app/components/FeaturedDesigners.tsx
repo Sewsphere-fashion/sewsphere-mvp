@@ -83,7 +83,7 @@ function DesignerCard({ designer }: { designer: Designer }) {
         <img
           src={designer.image}
           alt={designer.name}
-          className="w-full h-48 object-cover object-top"
+          className="w-full h-52 object-contain"
         />
         {/* Verified badge */}
         <div className="absolute bottom-2 right-2">

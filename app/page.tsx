@@ -8,6 +8,7 @@ import ExclusiveCollections from "./components/ExclusiveCollections";
 import HowitWorks from "./components/HowitWorks";
 import StartJourney from "./components/StartJourney";
 import Footer from "./components/Footer";
+import DesignerFeatures from "./designer/components/DesignerFeatures";
 
 export default function Home() {
   return (
@@ -15,7 +16,8 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <TrustBadges />
-      <FeaturedDesigners />
+      {/* <FeaturedDesigners /> */}
+      <DesignerFeatures/>
       <ExclusiveCollections />
       <HowitWorks />
       <StartJourney />

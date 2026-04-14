@@ -5,6 +5,7 @@ import { AuthTabs } from "../components/AuthTabs";
 import { Eye, EyeOff } from "lucide-react";
 import SignupSuccess from "../components/signupsuccess";
 import WelcomeModal from "../components/Modals/WelcomeModal";
+import Link from "next/link";
 
 function Input({
   label,
@@ -362,7 +363,7 @@ function SignupForm() {
         <span>
           {" "}
           I agree to the{" "}
-          <span className="text-[#C76B4A]">Terms of Services</span> and{" "}
+          <Link href="/terms" className="text-[#C76B4A]">Terms of Services</Link> and{" "}
           <span className="text-[#C76B4A]">Privacy Policy</span>{" "}
         </span>{" "}
       </label>
