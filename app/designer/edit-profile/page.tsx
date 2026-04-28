@@ -115,9 +115,11 @@ export default function OnboardingStepOne() {
         specialties: formData.specialties,
       };
 
+      const token = localStorage.getItem("token");
       const res = await fetch("https://api.sewsphere.co/api/v1/designers/", {
         method: "POST",
         headers: {
+            Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
