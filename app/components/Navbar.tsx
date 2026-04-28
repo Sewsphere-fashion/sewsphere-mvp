@@ -10,8 +10,8 @@ import AuthModal from "./AuthModal";
 const NavLinks = [
   { name: "Home", href: "/" },
   { name: "Designer", href: "/designer" },
-  { name: "Ready-made", href: "/ready-made" },
-  { name: "Order", href: "/order" },
+  { name: "Ready-made", href: "/" },
+  { name: "Order", href: "/" },
 ];
 
 export default function Navbar() {
