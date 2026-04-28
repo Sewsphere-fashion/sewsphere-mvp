@@ -119,18 +119,21 @@ export default function OnboardingStepOne() {
       const res = await fetch("https://api.sewsphere.co/api/v1/designers/", {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
+      const data = await res.json();
+
+      console.log("STATUS:", res.status);
+      console.log("RESPONSE:", data);
 
       if (!res.ok) throw new Error("Submission failed");
       await res.json();
       setSuccess(true);
-    
     } catch (err) {
-        setError("Failed to submit form");
+      setError("Failed to submit form");
       console.error(err);
     } finally {
       setLoading(false);
@@ -140,20 +143,19 @@ export default function OnboardingStepOne() {
   return (
     <div className="bg-[#F5EFE6] py-10 min-h-screen">
       <div className="max-w-3xl mx-auto p-6 rounded-lg bg-white shadow-lg">
+        {/* Success Message */}
+        {success && (
+          <div className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 text-sm">
+            ✅ Your details have been saved successfully!
+          </div>
+        )}
 
-         {/* Success Message */}
-      {success && (
-        <div className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 text-sm">
-          ✅ Your details have been saved successfully!
-        </div>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
-          {error}
-        </div>
-      )}
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
+            {error}
+          </div>
+        )}
 
         {/* Title */}
         <h2 className="text-2xl font-semibold">Tell Us About Yourself</h2>
@@ -325,7 +327,6 @@ export default function OnboardingStepOne() {
           </button>
         </div>
       </div>
-     
     </div>
   );
 }
