@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { ImagePlus, Loader2 } from "lucide-react";
 
-type FormData = {
+type FormDataType = {
   profileImage: File | null;
-  profileImageUrl: string;
   bio: string;
   experience: string;
-  location: string;
+  state: string;
+  city: string;
   specialties: string[];
 };
 
@@ -47,12 +47,15 @@ const locationOptions = [
 ];
 
 export default function OnboardingStepOne() {
-  const [formData, setFormData] = useState<FormData>({
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState<FormDataType>({
     profileImage: null,
-    profileImageUrl: "",
     bio: "",
     experience: "",
-    location: "",
+    state: "",
+    city: "",
     specialties: [],
   });
 
@@ -77,10 +80,13 @@ export default function OnboardingStepOne() {
     setUploading(true);
 
     try {
-      const res = await fetch("https://api.sewsphere.co/api/v1/users/profile-picture", {
-        method: "POST",
-        body: form,
-      });
+      const res = await fetch(
+        "https://api.sewsphere.co/api/v1/users/profile-picture",
+        {
+          method: "POST",
+          body: form,
+        },
+      );
 
       if (!res.ok) throw new Error("Upload failed");
 
@@ -98,13 +104,15 @@ export default function OnboardingStepOne() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
+    setError("");
+    setSuccess(false);
     try {
       const payload = {
         bio: formData.bio,
-        experience: formData.experience,
-        location: formData.location,
+        state: formData.state,
+        city: formData.city,
         specialties: formData.specialties,
-        profileImage: formData.profileImageUrl,
       };
 
       const res = await fetch("https://api.sewsphere.co/api/v1/designers/", {
@@ -116,17 +124,35 @@ export default function OnboardingStepOne() {
       });
 
       if (!res.ok) throw new Error("Submission failed");
-
-      const data = await res.json();
-      console.log("Success:", data);
+      await res.json();
+      setSuccess(true);
+    
     } catch (err) {
+        setError("Failed to submit form");
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="bg-[#F5EFE6] py-10 min-h-screen">
       <div className="max-w-3xl mx-auto p-6 rounded-lg bg-white shadow-lg">
+
+         {/* Success Message */}
+      {success && (
+        <div className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 text-sm">
+          ✅ Your details have been saved successfully!
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+
         {/* Title */}
         <h2 className="text-2xl font-semibold">Tell Us About Yourself</h2>
         <p className="text-gray-500 mb-6">
@@ -224,22 +250,36 @@ export default function OnboardingStepOne() {
         </div>
 
         {/* Location */}
+        {/* State */}
         <div className="mb-4">
           <label className="font-medium">
-            Location <span className="text-red-500">*</span>
+            State <span className="text-red-500">*</span>
           </label>
           <select
             className="w-full border p-3 mt-2 rounded-lg bg-white"
-            value={formData.location}
+            value={formData.state}
             onChange={(e) =>
-              setFormData({ ...formData, location: e.target.value })
+              setFormData({ ...formData, state: e.target.value })
             }
           >
-            <option value="">Select your location</option>
+            <option value="">Select your state</option>
             {locationOptions.map((loc) => (
               <option key={loc}>{loc}</option>
             ))}
           </select>
+        </div>
+
+        {/* City */}
+        <div className="mb-4">
+          <label className="font-medium">
+            City <span className="text-red-500">*</span>
+          </label>
+          <input
+            className="w-full border p-3 mt-2 rounded-lg"
+            placeholder="Enter your city"
+            value={formData.city}
+            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+          />
         </div>
 
         {/* Specialties */}
@@ -272,7 +312,7 @@ export default function OnboardingStepOne() {
           </p>
         </div>
 
-        {/* Continue */}
+        {/* Submit */}
         <div className="flex justify-end">
           <button
             onClick={handleSubmit}
@@ -283,6 +323,7 @@ export default function OnboardingStepOne() {
           </button>
         </div>
       </div>
+     
     </div>
   );
 }
