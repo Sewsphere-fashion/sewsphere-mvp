@@ -112,7 +112,7 @@ export default function OnboardingStepOne() {
         bio: formData.bio,
         state: formData.state,
         city: formData.city,
-        specialties: formData.specialties,
+        speciality: formData.specialties,
       };
 
       const token = localStorage.getItem("token");
@@ -128,6 +128,7 @@ export default function OnboardingStepOne() {
 
       console.log("STATUS:", res.status);
       console.log("RESPONSE:", data);
+      setError(data.message || "An error occurred");
 
       if (!res.ok) throw new Error("Submission failed");
       await res.json();
@@ -325,6 +326,9 @@ export default function OnboardingStepOne() {
           >
             {uploading ? "Loading..." : "Submit"}
           </button>
+          {error && (
+            <p className="mt-3 text-sm text-red-500 text-center">{error}</p>
+          )}
         </div>
       </div>
     </div>
