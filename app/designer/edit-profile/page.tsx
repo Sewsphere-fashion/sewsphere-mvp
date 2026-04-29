@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ImagePlus, Loader2 } from "lucide-react";
 
 type FormDataType = {
-  profileImage: File | null;
+  photo: File | null;
   bio: string;
   experience: string;
   state: string;
@@ -51,7 +51,7 @@ export default function OnboardingStepOne() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState<FormDataType>({
-    profileImage: null,
+    photo: null,
     bio: "",
     experience: "",
     state: "",
@@ -83,7 +83,7 @@ export default function OnboardingStepOne() {
       const res = await fetch(
         "https://api.sewsphere.co/api/v1/users/profile-picture",
         {
-          method: "POST",
+          method: "PATCH",
           body: form,
         },
       );
@@ -94,7 +94,7 @@ export default function OnboardingStepOne() {
 
       setFormData((prev) => ({
         ...prev,
-        profileImageUrl: data.url,
+        photoUrl: data.url,
       }));
     } catch (err) {
       console.error(err);
@@ -171,9 +171,9 @@ export default function OnboardingStepOne() {
           <div className="flex items-center gap-4">
             {/* Preview */}
             <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden relative">
-              {formData.profileImage ? (
+              {formData.photo ? (
                 <img
-                  src={URL.createObjectURL(formData.profileImage)}
+                  src={URL.createObjectURL(formData.photo)}
                   alt="preview"
                   className="w-full h-full object-cover"
                 />
@@ -203,7 +203,7 @@ export default function OnboardingStepOne() {
                   // preview immediately
                   setFormData((prev) => ({
                     ...prev,
-                    profileImage: file,
+                    photo: file,
                   }));
 
                   handleImageUpload(file);
