@@ -74,8 +74,9 @@ export default function OnboardingStepOne() {
   };
 
   const handleImageUpload = async (file: File) => {
+      const token = localStorage.getItem("token");
     const form = new FormData();
-    form.append("file", file);
+    form.append("photo", file);
 
     setUploading(true);
 
@@ -85,16 +86,22 @@ export default function OnboardingStepOne() {
         {
           method: "PATCH",
           body: form,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
+       const data = await res.json();
 
-      if (!res.ok) throw new Error("Upload failed");
+    console.log(data)
 
-      const data = await res.json();
+ if (!res.ok) {
+      throw new Error(data.message || "Upload failed");
+    }
 
       setFormData((prev) => ({
         ...prev,
-        photoUrl: data.url,
+        photo: file,
       }));
     } catch (err) {
       console.error(err);
@@ -200,7 +207,6 @@ export default function OnboardingStepOne() {
                   const file = e.target.files?.[0];
                   if (!file) return;
 
-                  // preview immediately
                   setFormData((prev) => ({
                     ...prev,
                     photo: file,
