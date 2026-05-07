@@ -89,30 +89,29 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       });
 
       const data = await res.json();
-    //   localStorage.setItem("token", data.data.accessToken);
+      //   localStorage.setItem("token", data.data.accessToken);
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed, please try again");
       }
 
-       if (data?.data?.accessToken) {
-         const token = data.data.accessToken;
-  const user = data.data.user;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      if (data?.data?.accessToken) {
+        const token = data.data.accessToken;
+        const user = data.data.user;
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
 
-      setToken(token);
-      setUser(user);
+        setToken(token);
+        setUser(user);
 
-      setEmail("");
-      setPassword("");
-      setError("");
+        setEmail("");
+        setPassword("");
+        setError("");
 
- setFirstName(user?.firstName || "User");
-      
-      setWelcomeOpen(true);
-       
-    }
+        setFirstName(user?.firstName || "User");
+
+        setWelcomeOpen(true);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -246,19 +245,22 @@ function SignupForm() {
     setError("");
 
     try {
-      const res = await fetch("https://api.sewsphere.co/api/v1/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        "https://api.sewsphere.co/api/v1/users/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            password,
+            role,
+          }),
         },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-          role,
-        }),
-      });
+      );
 
       const data = await res.json();
 
@@ -369,8 +371,10 @@ function SignupForm() {
         <span>
           {" "}
           I agree to the{" "}
-          <Link href="/terms" className="text-[#C76B4A]">Terms of Services</Link> and{" "}
-          <span className="text-[#C76B4A]">Privacy Policy</span>{" "}
+          <Link href="/terms" className="text-[#C76B4A]">
+            Terms of Services
+          </Link>{" "}
+          and <span className="text-[#C76B4A]">Privacy Policy</span>{" "}
         </span>{" "}
       </label>
 

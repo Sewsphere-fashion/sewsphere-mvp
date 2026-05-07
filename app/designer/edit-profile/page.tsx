@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ImagePlus, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useOnboardingStore } from "../../store/onboardingStore";
 
 const specialtiesList = [
@@ -39,6 +40,7 @@ const locationOptions = [
 ];
 
 export default function OnboardingStepOne() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -97,8 +99,6 @@ export default function OnboardingStepOne() {
       if (!res.ok) {
         throw new Error(data.message || "Upload failed");
       }
-
-      setPhoto(file);
     } catch (err) {
       console.error(err);
       setError("Image upload failed");
@@ -122,17 +122,14 @@ export default function OnboardingStepOne() {
 
       const token = localStorage.getItem("token");
 
-      const res = await fetch(
-        "https://api.sewsphere.co/api/v1/designers/",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
+      const res = await fetch("https://api.sewsphere.co/api/v1/designers/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
       const data = await res.json();
 
@@ -151,6 +148,7 @@ export default function OnboardingStepOne() {
     } finally {
       setLoading(false);
     }
+    router.push("/designer/profile");
   };
 
   return (
@@ -186,7 +184,7 @@ export default function OnboardingStepOne() {
             <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden relative">
               {photo ? (
                 <img
-                  src={URL.createObjectURL(photo)}
+                  src={photo}
                   alt="preview"
                   className="w-full h-full object-cover"
                 />
@@ -214,7 +212,8 @@ export default function OnboardingStepOne() {
 
                   if (!file) return;
 
-                  setPhoto(file);
+                  const imageUrl = URL.createObjectURL(file);
+                  setPhoto(imageUrl);
 
                   handleImageUpload(file);
                 }}
@@ -227,9 +226,7 @@ export default function OnboardingStepOne() {
                 Upload Image
               </label>
 
-              <p className="text-xs text-gray-400 mt-1">
-                JPG, PNG (Max 5MB)
-              </p>
+              <p className="text-xs text-gray-400 mt-1">JPG, PNG (Max 5MB)</p>
             </div>
           </div>
         </div>
