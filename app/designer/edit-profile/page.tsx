@@ -2,15 +2,7 @@
 
 import { useState } from "react";
 import { ImagePlus, Loader2 } from "lucide-react";
-
-type FormDataType = {
-  photo: File | null;
-  bio: string;
-  experience: string;
-  state: string;
-  city: string;
-  specialties: string[];
-};
+import { useOnboardingStore } from "../../store/onboardingStore";
 
 const specialtiesList = [
   "Custom Pattern Making",
@@ -50,32 +42,38 @@ export default function OnboardingStepOne() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState<FormDataType>({
-    photo: null,
-    bio: "",
-    experience: "",
-    state: "",
-    city: "",
-    specialties: [],
-  });
-
   const [uploading, setUploading] = useState(false);
 
+  const {
+    photo,
+    bio,
+    experience,
+    state,
+    city,
+    specialties,
+    setPhoto,
+    setBio,
+    setExperience,
+    setStateValue,
+    setCity,
+    setSpecialties,
+  } = useOnboardingStore();
+
   const toggleSpecialty = (item: string) => {
-    setFormData((prev) => {
-      const exists = prev.specialties.includes(item);
-      return {
-        ...prev,
-        specialties: exists
-          ? prev.specialties.filter((s) => s !== item)
-          : [...prev.specialties, item],
-      };
-    });
+    const exists = specialties.includes(item);
+
+    if (exists) {
+      setSpecialties(specialties.filter((s) => s !== item));
+    } else {
+      setSpecialties([...specialties, item]);
+    }
   };
 
   const handleImageUpload = async (file: File) => {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+
     const form = new FormData();
+
     form.append("photo", file);
 
     setUploading(true);
@@ -85,26 +83,25 @@ export default function OnboardingStepOne() {
         "https://api.sewsphere.co/api/v1/users/profile-picture",
         {
           method: "PATCH",
-          body: form,
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          body: form,
         },
       );
-       const data = await res.json();
 
-    console.log(data)
+      const data = await res.json();
 
- if (!res.ok) {
-      throw new Error(data.message || "Upload failed");
-    }
+      console.log(data);
 
-      setFormData((prev) => ({
-        ...prev,
-        photo: file,
-      }));
+      if (!res.ok) {
+        throw new Error(data.message || "Upload failed");
+      }
+
+      setPhoto(file);
     } catch (err) {
       console.error(err);
+      setError("Image upload failed");
     } finally {
       setUploading(false);
     }
@@ -114,35 +111,43 @@ export default function OnboardingStepOne() {
     setLoading(true);
     setError("");
     setSuccess(false);
+
     try {
       const payload = {
-        bio: formData.bio,
-        state: formData.state,
-        city: formData.city,
-        speciality: formData.specialties,
+        bio,
+        state,
+        city,
+        speciality: specialties,
       };
 
       const token = localStorage.getItem("token");
-      const res = await fetch("https://api.sewsphere.co/api/v1/designers/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+
+      const res = await fetch(
+        "https://api.sewsphere.co/api/v1/designers/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload),
-      });
+      );
+
       const data = await res.json();
 
       console.log("STATUS:", res.status);
       console.log("RESPONSE:", data);
-      setError(data.message || "An error occurred");
 
-      if (!res.ok) throw new Error("Submission failed");
-      await res.json();
+      if (!res.ok) {
+        setError(data.message || "Submission failed");
+        return;
+      }
+
       setSuccess(true);
     } catch (err) {
-      setError("Failed to submit form");
       console.error(err);
+      setError("Failed to submit form");
     } finally {
       setLoading(false);
     }
@@ -167,6 +172,7 @@ export default function OnboardingStepOne() {
 
         {/* Title */}
         <h2 className="text-2xl font-semibold">Tell Us About Yourself</h2>
+
         <p className="text-gray-500 mb-6">
           Let your client know about you and what you do.
         </p>
@@ -178,9 +184,9 @@ export default function OnboardingStepOne() {
           <div className="flex items-center gap-4">
             {/* Preview */}
             <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden relative">
-              {formData.photo ? (
+              {photo ? (
                 <img
-                  src={URL.createObjectURL(formData.photo)}
+                  src={URL.createObjectURL(photo)}
                   alt="preview"
                   className="w-full h-full object-cover"
                 />
@@ -205,12 +211,10 @@ export default function OnboardingStepOne() {
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
+
                   if (!file) return;
 
-                  setFormData((prev) => ({
-                    ...prev,
-                    photo: file,
-                  }));
+                  setPhoto(file);
 
                   handleImageUpload(file);
                 }}
@@ -223,7 +227,9 @@ export default function OnboardingStepOne() {
                 Upload Image
               </label>
 
-              <p className="text-xs text-gray-400 mt-1">JPG, PNG (Max 5MB)</p>
+              <p className="text-xs text-gray-400 mt-1">
+                JPG, PNG (Max 5MB)
+              </p>
             </div>
           </div>
         </div>
@@ -233,11 +239,12 @@ export default function OnboardingStepOne() {
           <label className="font-medium">
             Professional Bio <span className="text-red-500">*</span>
           </label>
+
           <textarea
             className="w-full border p-3 mt-2 rounded-lg"
             placeholder="Brief information about yourself"
-            value={formData.bio}
-            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
           />
         </div>
 
@@ -246,34 +253,33 @@ export default function OnboardingStepOne() {
           <label className="font-medium">
             Years of Experience <span className="text-red-500">*</span>
           </label>
+
           <select
             className="w-full border p-3 mt-2 rounded-lg bg-white"
-            value={formData.experience}
-            onChange={(e) =>
-              setFormData({ ...formData, experience: e.target.value })
-            }
+            value={experience}
+            onChange={(e) => setExperience(e.target.value)}
           >
             <option value="">Select your experience</option>
+
             {experienceOptions.map((exp) => (
               <option key={exp}>{exp}</option>
             ))}
           </select>
         </div>
 
-        {/* Location */}
         {/* State */}
         <div className="mb-4">
           <label className="font-medium">
             State <span className="text-red-500">*</span>
           </label>
+
           <select
             className="w-full border p-3 mt-2 rounded-lg bg-white"
-            value={formData.state}
-            onChange={(e) =>
-              setFormData({ ...formData, state: e.target.value })
-            }
+            value={state}
+            onChange={(e) => setStateValue(e.target.value)}
           >
             <option value="">Select your state</option>
+
             {locationOptions.map((loc) => (
               <option key={loc}>{loc}</option>
             ))}
@@ -285,11 +291,12 @@ export default function OnboardingStepOne() {
           <label className="font-medium">
             City <span className="text-red-500">*</span>
           </label>
+
           <input
             className="w-full border p-3 mt-2 rounded-lg"
             placeholder="Enter your city"
-            value={formData.city}
-            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
           />
         </div>
 
@@ -306,7 +313,7 @@ export default function OnboardingStepOne() {
                 type="button"
                 onClick={() => toggleSpecialty(item)}
                 className={`px-3 py-1 rounded-full border text-sm ${
-                  formData.specialties.includes(item)
+                  specialties.includes(item)
                     ? "bg-[#C76B4A] text-white"
                     : "bg-gray-100"
                 }`}
@@ -317,9 +324,8 @@ export default function OnboardingStepOne() {
           </div>
 
           <p className="text-sm text-gray-500 mt-3">
-            {formData.specialties.length}{" "}
-            {formData.specialties.length === 1 ? "specialty" : "specialties"}{" "}
-            selected
+            {specialties.length}{" "}
+            {specialties.length === 1 ? "specialty" : "specialties"} selected
           </p>
         </div>
 
@@ -327,14 +333,11 @@ export default function OnboardingStepOne() {
         <div className="flex justify-end">
           <button
             onClick={handleSubmit}
-            disabled={uploading}
+            disabled={uploading || loading}
             className="bg-[#C76B4A] text-white px-6 py-2 rounded-lg disabled:opacity-50"
           >
-            {uploading ? "Loading..." : "Submit"}
+            {loading ? "Submitting..." : "Submit"}
           </button>
-          {error && (
-            <p className="mt-3 text-sm text-red-500 text-center">{error}</p>
-          )}
         </div>
       </div>
     </div>
