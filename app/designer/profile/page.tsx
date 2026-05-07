@@ -41,7 +41,7 @@ export default function DesignerDetailsPage() {
         <div className="relative w-full md:w-[380px] h-[260px] md:h-[300px] rounded-xl overflow-hidden">
           {photo ? (
             <img
-              src={URL.createObjectURL(photo)}
+              src={photo}
               alt="Designer"
               className="w-full h-full object-cover"
             />
