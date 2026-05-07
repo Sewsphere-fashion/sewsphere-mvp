@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AuthTabs } from "../components/AuthTabs";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuthStore } from "../store/authStore";
 import SignupSuccess from "../components/signupsuccess";
 import WelcomeModal from "../components/Modals/WelcomeModal";
 import Link from "next/link";
@@ -45,6 +46,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { setUser, setToken } = useAuthStore();
   const [firstName, setFirstName] = useState("");
   const [welcomeOpen, setWelcomeOpen] = useState(false);
   const validate = () => {
@@ -94,16 +96,20 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       }
 
        if (data?.data?.accessToken) {
-      localStorage.setItem("token", data.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(data.data.user));
+         const token = data.data.accessToken;
+  const user = data.data.user;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      
+      setToken(token);
+      setUser(user);
+
       setEmail("");
       setPassword("");
       setError("");
 
-      const firstName = data.data.user?.firstName || "User";
-      setFirstName(firstName);
+ setFirstName(user?.firstName || "User");
+      
       setWelcomeOpen(true);
        
     }

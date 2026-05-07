@@ -16,7 +16,8 @@
     "react-dom": "19.2.3",
     "tailwind-animate": "^0.2.10",
     "tailwind-merge": "^3.5.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
